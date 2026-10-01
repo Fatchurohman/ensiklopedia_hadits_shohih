@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ensiklopedia Hadits Sahih & Sunan</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Google (Plus Jakarta Sans & Amiri untuk Teks Arab) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #0b1329;
+      color: #f1f5f9;
+    }
+    .font-arabic {
+      font-family: 'Amiri', serif;
+      line-height: 2.2;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* CSS Khusus Format Cetak PDF */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+      header, footer, .no-print, #searchInput, .scrollbar-thin {
+        display: none !important;
+      }
+      .glass-card {
+        background: transparent !important;
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: none !important;
+        color: #000000 !important;
+      }
+      .print-only-card {
+        display: block !important;
+      }
+      .hadith-card-item {
+        display: none !important;
+      }
+      .hadith-card-item.printing-active {
+        display: block !important;
+      }
+      .font-arabic {
+        color: #000000 !important;
+      }
+      .text-slate-300, .text-amber-100\/90 {
+        color: #1e293b !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+
+  <!-- ================= HEADER UTAMA ================= -->
+  <header class="w-full text-center py-10 px-4 border-b border-slate-800/80 glass-card sticky top-0 z-50">
+    <div class="max-w-4xl mx-auto">
+      
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-wide bg-gradient-to-r from-amber-200 via-emerald-300 to-teal-200 bg-clip-text text-transparent drop-shadow-sm">
+        Ensiklopedia Hadits Sahih
+      </h1>
+      <p class="text-slate-400 text-xs sm:text-sm mt-1 tracking-widest uppercase font-medium">
+        Kumpulan Sahih & Sunan Enam Imam Perawi Utama
+      </p>
+
+      <div class="mt-4 flex flex-wrap items-center justify-center gap-3">
+        <!-- Identitas Developer + Lampu Kelap-Kelip (Live Indicator) -->
+        <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-900/90 border border-slate-700/60 shadow-inner">
+          <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
+          </span>
+          <span class="text-xs sm:text-sm font-mono tracking-wide text-slate-300">
+            developer : <strong class="text-emerald-400 font-bold">fatur62</strong>
+          </span>
+        </div>
+
+        <!-- Indicator Live Visitor Counter -->
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-slate-700/60 shadow-inner text-xs text-slate-300">
+          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+          </svg>
+          <span>Pengunjung: <strong id="visitorCount" class="text-emerald-400 font-bold">...</strong></span>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= KONTEN UTAMA & PENCARIAN ================= -->
+  <main class="max-w-4xl mx-auto w-full px-4 py-8 flex-grow">
+    
+    <!-- Tombol Filter Pilihan Perawi (6 Perawi Utama) -->
+    <div class="flex items-center gap-2 mb-6 overflow-x-auto pb-2 no-print scrollbar-thin">
+      <button 
+        id="btnBukhari" 
+        onclick="switchBook('bukhari')" 
+        class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-semibold text-xs whitespace-nowrap shadow-md transition hover:bg-emerald-500 flex items-center gap-1.5">
+        Bukhari
+      </button>
+      <button 
+        id="btnMuslim" 
+        onclick="switchBook('muslim')" 
+        class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold text-xs whitespace-nowrap transition hover:bg-slate-700 flex items-center gap-1.5">
+        Muslim
+      </button>
+      <button 
+        id="btnAbudaud" 
+        onclick="switchBook('abudaud')" 
+        class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold text-xs whitespace-nowrap transition hover:bg-slate-700 flex items-center gap-1.5">
+        Abu Daud
+      </button>
+      <button 
+        id="btnTirmidzi" 
+        onclick="switchBook('tirmidzi')" 
+        class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold text-xs whitespace-nowrap transition hover:bg-slate-700 flex items-center gap-1.5">
+        Tirmidzi
+      </button>
+      <button 
+        id="btnNasai" 
+        onclick="switchBook('nasai')" 
+        class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold text-xs whitespace-nowrap transition hover:bg-slate-700 flex items-center gap-1.5">
+        Nasa'i
+      </button>
+      <button 
+        id="btnIbnuMajah" 
+        onclick="switchBook('ibnumajah')" 
+        class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold text-xs whitespace-nowrap transition hover:bg-slate-700 flex items-center gap-1.5">
+        Ibnu Majah
+      </button>
+    </div>
+
+    <!-- Kolom Pencarian Responsif -->
+    <div class="relative mb-8 no-print">
+      <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Cari kata kunci (misal: niat, shalat, sabar) atau nomor hadits..."
+        class="w-full pl-11 pr-4 py-4 rounded-xl glass-card text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm sm:text-base shadow-lg"
+      >
+    </div>
+
+    <!-- Container Tempat Render Kartu Hadits oleh app.js -->
+    <div id="hadithContainer" class="space-y-6"></div>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="text-center py-6 border-t border-slate-800/60 text-xs text-slate-500 no-print">
+    <p>&copy; 2026 Ensiklopedia Sahih. Developed with excellence by <span class="text-emerald-400 font-semibold">fatur62</span>.</p>
+  </footer>
+
+  <!-- Script Pemanggil Logic Aplikasi -->
+  <script src="app.js"></script>
+</body>
+</html>
